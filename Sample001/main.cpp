@@ -25,11 +25,11 @@ constexpr T dt = static_cast<T>(1./1000.);
 
 /* initial value */
 template <typename T>
-static constexpr T x_init = static_cast<T>(1./10.);
+constexpr T x_init = static_cast<T>(1./10.);
 
 /* f(x) */
 template<typename T>
-T func(T x){
+constexpr T func(T x){
     return alpha<T> * (1. - x / beta<T>) * x;
 }
 
