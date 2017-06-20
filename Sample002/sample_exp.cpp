@@ -13,7 +13,7 @@
 //パラメータ
 const double y_init  = 1.0;
 const double dt      = 0.01; //時間の刻み幅だよ．
-const double T_limit = 10;
+const double T_limit = 10.0;
 
 double func(double y){
     return y;
@@ -21,7 +21,7 @@ double func(double y){
 
 int main(){
     //t=0からはじめるよ．
-    double t = 0.;
+    double t = 0.0;
     //常微分方程式の初期条件を設定するよ．
     double y = y_init;
 
@@ -40,7 +40,7 @@ int main(){
         k3 = func(y + dt * k2 / 2.0);
         k4 = func(y + dt * k3);
         //dt秒後のyの値を求めるよ．
-        y = y + dt / 6. * (k1 + 2.0 * k2 + 2.0 * k3 + k4);
+        y = y + dt / 6.0 * (k1 + 2.0 * k2 + 2.0 * k3 + k4);
         //時間tを進めるよ．
         t = i * dt;
         //t秒後のときのyの値を表示するよ．
