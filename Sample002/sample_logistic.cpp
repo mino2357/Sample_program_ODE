@@ -14,7 +14,7 @@
 
 //パラメータ
 const double y_init  =  0.1;
-const double dt      =  0.001; //時間の刻み幅．
+const double dt      =  0.01; //時間の刻み幅．
 const double T_limit = 10.0;
 const double alpha   =  1.0;
 const double beta    =  1.0;
@@ -34,9 +34,12 @@ int main(){
     //RK法で使うkたちを宣言して初期化．
     double k1, k2, k3, k4;
     k1 = k2 = k3 = k4 = 0.0;
+    
+    double C2 = 0.0;
 
-    //はじめの値を表示.
-    std::cout << t << " " << y_init << " " << std::abs(y - 1.0 / (1.0 + 9.0 * std::exp(-t))) << std::endl;
+    //はじめの値を表示. 「時刻t シミュレーション結果 理論理」の順で出力．
+    C2 = 1.0 - beta / y_init;
+    std::cout << t << " " << y_init << " " << std::abs(y - beta / (1.0 - C2 * std::exp(- alpha * t))) << std::endl;
 
     //漸化式を解くよ．T_limit秒まで解く．
     for(int i=1; t<T_limit; i++){
@@ -50,6 +53,6 @@ int main(){
         //時間tをdt秒進める．
         t = i * dt;
         //t秒後のときのyの値を表示する．
-        std::cout << t << " " << y << " "<< std::abs(y - 1.0 / (1.0 + 9.0 * std::exp(-t))) << std::endl;
+        std::cout << t << " " << y << " "<< std::abs(y - beta / (1.0 - C2 * std::exp(- alpha * t))) << std::endl;
     }
 }
