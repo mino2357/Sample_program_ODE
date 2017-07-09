@@ -1,17 +1,20 @@
 /*
  * RK4法で二階の常微分方程式を解く．
- * テーマ：単振動．調和振動子．
+ * テーマ：単振り子．
  *
  * by みーくん．
  */
 
 #include <iostream>
+#include <cmath>
 #include "myvector.hpp"
 
 // パラメータ
-constexpr double k      = 1.;
-constexpr double m      = 1.;
+constexpr double g      = 1.;//9.8
+constexpr double l      = 1.;
+//初期位置
 constexpr double x_init = 1.;
+//初速度
 constexpr double v_init = 0.;
 
 //時刻に関するパラメータ
@@ -20,11 +23,11 @@ constexpr double t_limit = 20.0;
 
 //R^2からR^2への関数．
 mino2357::vector<> func(const mino2357::vector<>& x){
-    return mino2357::vector<>{x.getComponentY(), - k / m * x.getComponentX()};
+    return mino2357::vector<>{x.getComponentY(), - g / l * std::sin(x.getComponentX())};
 }
 
 int main(){
-    mino2357::vector<> x(x_init, v_init);
+    mino2357::vector<> x(x_init / l, v_init);
     mino2357::vector<> k1 {};
     mino2357::vector<> k2 {};
     mino2357::vector<> k3 {};

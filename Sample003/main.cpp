@@ -28,7 +28,7 @@ int main(){
 
     double t {};
 
-    for(size_t i {}; t<t_limit; ++i){
+    for(std::size_t i {}; t<t_limit; ++i){
         std::cout << t << " " << x.getComponentX() << " " << x.getComponentY() << std::endl;
         //Euler法で常微分方程式を解く．       
         x = x + dt * func(x);
