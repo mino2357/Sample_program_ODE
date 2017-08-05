@@ -63,9 +63,7 @@ T potentialEnergy(Eigen::Matrix<T, 4, 1>& x){
 template <typename T = double>
 T kineticEnergy(Eigen::Matrix<T, 4, 1>& x){
 	T theta1 = x(0, 0);
-	T eta1   = x(1, 0);
 	T theta2 = x(2, 0);
-	T eta2   = x(3, 0);
 
 	return - m1 * g * L1 * std::cos(theta1) - m2 * g * (L1 * std::cos(theta1) + L2 * std::cos(theta2));
 }
