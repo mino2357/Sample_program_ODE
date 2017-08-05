@@ -20,20 +20,20 @@ constexpr double g           = 1.0;//9.8
 constexpr double m1          = 1.0;
 constexpr double m2          = 1.0;
 constexpr double L1          = 1.0;
-constexpr double L2          = 1.0;
+constexpr double L2          = 0.4;
 //初期角
-constexpr double theta1_init = 1.0;
-constexpr double theta2_init = 0.0;
+constexpr double theta1_init = 2.0;
+constexpr double theta2_init = 2.0;
 //初角速度
 constexpr double omega1_init = 0.;
 constexpr double omega2_init = 0.;
 
 //時刻に関するパラメータ
-constexpr double dt          =   0.001;
-constexpr double t_limit     = 200.0;
+constexpr double dt          =     0.001;
+constexpr double t_limit     = 20000.0;
 
 //インターバル
-constexpr int INTV = 1;
+constexpr int INTV = 3;
 
 //R^2からR^2への関数．
 Eigen::Matrix<double, 4, 1> func(const Eigen::Matrix<double, 4, 1>& x){
