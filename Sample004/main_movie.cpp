@@ -20,7 +20,7 @@ constexpr double v_init = 0.;
 constexpr double dt      = 0.001;
 constexpr double t_limit = 2000.0;
 //インターバル
-constexpr int INTV = 20;
+constexpr int INTV = 2;
 
 //R^2からR^2への関数．
 mino2357::vector<> func(const mino2357::vector<>& x){
