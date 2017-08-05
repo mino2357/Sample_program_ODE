@@ -45,8 +45,8 @@ int main(){
     for(std::size_t i {}; t<t_limit; ++i){
         //std::cout << t << " " << x.getComponentX() << " " << x.getComponentY() << std::endl;
         
+        //描画
         if(i%INTV == 0){
-            //描画
             fprintf(gp, "plot '-' w l linewidth 3\n");
             fprintf(gp, "0.0 0.0\n");
             fprintf(gp, "%f %f\n", l * std::sin(x.getComponentX()), - l * std::cos(x.getComponentX()));
