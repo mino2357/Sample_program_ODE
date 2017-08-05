@@ -18,13 +18,13 @@
 // パラメータ
 constexpr double g      = 1.;//9.8
 constexpr double l      = 1.;
-//初期位置
+//初期角
 constexpr double theta_init = 1.;
-//初速度
+//初角速度
 constexpr double omega_init = 0.;
 
 //時刻に関するパラメータ
-constexpr double dt      = 0.001;
+constexpr double dt      =  0.001;
 constexpr double t_limit = 20.0;
 
 //R^2からR^2への関数．
@@ -41,9 +41,9 @@ int main(){
 	Eigen::Matrix<double ,2, 1> k3;
 	Eigen::Matrix<double ,2, 1> k4;
 
-    double t {};
+    double t{};
 
-    for(std::size_t i {}; t<t_limit; ++i){
+    for(std::size_t i{}; t<t_limit; ++i){
         std::cout << t << " " << x(0, 0) << " " << x(1, 0) << std::endl;
         //RK4法で常微分方程式を解く．
         k1 = func(x);
