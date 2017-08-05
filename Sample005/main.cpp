@@ -29,10 +29,7 @@ constexpr double t_limit = 20.0;
 
 //R^2からR^2への関数．
 Eigen::Matrix<double, 2, 1> func(const Eigen::Matrix<double, 2, 1>& x){
-	Eigen::Matrix<double, 2, 1> a;
-	a(0, 0) = x(1, 0);
-	a(1, 0) = - g / l * std::sin(x(0, 0));
-	return a;
+	return Eigen::Matrix<double, 2, 1> {x(1, 0), - g / l * std::sin(x(0, 0))};
 }
 
 int main(){
