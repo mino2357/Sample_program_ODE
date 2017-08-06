@@ -34,10 +34,10 @@ constexpr double omega1_init = 0.;
 constexpr double omega2_init = 0.;
 
 //時刻に関するパラメータ
-double dt                    =     0.001;
-constexpr double t_limit     = 20.0;
+double dt                    =    0.001;
+constexpr double t_limit     = 1000.0;
 
-constexpr double e_tol = 10e-8;
+constexpr double e_tol = 10e-6;
 
 //インターバル
 constexpr int INTV = 1;
