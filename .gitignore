@@ -35,4 +35,5 @@
 *.dat
 *.mp4
 *.png
+.DS_Store
 *.DS_Store
