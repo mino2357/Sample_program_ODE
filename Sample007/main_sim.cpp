@@ -34,13 +34,14 @@ constexpr double omega1_init = 0.;
 constexpr double omega2_init = 0.;
 
 //時刻に関するパラメータ
-double dt                    =    0.001;
-constexpr double t_limit     = 1000.0;
+double dt                    = 10e-3;
+constexpr double t_limit     = 10000.0;
 
-constexpr double e_tol = 10e-6;
+constexpr double e_tol = 10e-10;
+constexpr double t_min = 10e-6;
 
 //インターバル
-constexpr int INTV = 1;
+constexpr int INTV = 100;
 
 //movie
 constexpr int sim = 0;
@@ -132,11 +133,12 @@ int main(){
 
     for(std::size_t i{}; t<t_limit; ++i){
         //std::cout << t << " " << x(0, 0) << " " << x(1, 0) << " " << x(2, 0) << " " << x(3, 0) << " " << kineticEnergy<>(x) + potentialEnergy<>(x) << std::endl;
-        std::cout << t << " " << std::log10(dt) << " " << std::log10(std::abs(kineticEnergy<>(x) + potentialEnergy<>(x) - initPot)) << std::endl;
+        //std::cout << t << " " << std::log10(dt) << " " << std::log10(std::abs(kineticEnergy<>(x) + potentialEnergy<>(x) - initPot)) << std::endl;
 
         //描画
         if(i%INTV == 0){
             //std::cout << t << " " << kineticEnergy<>(x) << " " << potentialEnergy<>(x) << " " << kineticEnergy<>(x) + potentialEnergy<>(x) << std::endl;
+            std::cout << t << " " << std::log10(dt) << " " << std::log10(std::abs(kineticEnergy<>(x) + potentialEnergy<>(x) - initPot)) << std::endl;
             if(sim) fprintf(gp, "set output '%s/%06d.png'\n", c_dir_name, static_cast<int>(i/INTV));
             fprintf(gp, "plot '-' w lp lw 3 pt 7 ps 3\n");
             fprintf(gp, "0.0 0.0\n");
@@ -161,16 +163,15 @@ int main(){
         auto temp  = (25./216. * k1 + 1408./2565. * k3 + 2197./4104. * k4 - 1./5. * k5) - (16./135. * k1 + 6656./12825. * k3 + 28561./56430. * k4 - 9./50. * k5 + 2./55. * k6);
         auto R = std::sqrt(temp(0, 0) * temp(0, 0) + temp(1, 0) * temp(1, 0) + temp(2, 0) * temp(2, 0) + temp(3, 0) * temp(3, 0));
 
-        //std::cout << t << " " << dt << std::endl;
         //std::cout << t << " " << dt << " " << R << " " << std::endl;
-        //std::cout << 0.86 * std::pow(e_tol * dt / R, 0.25) << std::endl;
         
         auto delta = 0.86 * std::pow(e_tol * dt / R, 0.25);
 
+        //この辺は適当にチューニング．最適な刻み幅制御は自分もよくわかっていない．
         if(delta < 0.1){
             dt = 0.1 * dt;
-            if(dt < e_tol){
-                dt = 0.0001;
+            if(dt < t_min){
+                dt = t_min;
             }
         }else if(delta > 4){
             dt = 4. * dt;
@@ -181,6 +182,9 @@ int main(){
             dt = delta * dt;
             if(dt > 0.1){
                 dt = 0.1;
+            }
+            if(dt < t_min){
+                dt = t_min;
             }
         }
 
