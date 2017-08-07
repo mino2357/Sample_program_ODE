@@ -29,7 +29,7 @@ namespace mp = boost::multiprecision;
 using multiFloat = mp::cpp_dec_float_100;
 
 // パラメータ
-const multiFloat e("0.999");
+const multiFloat e("0.99999");
 //初期角
 const multiFloat x_init("3.0");
 const multiFloat y_init("3.0");
@@ -43,6 +43,7 @@ const multiFloat t_limit("20.0");
 
 const multiFloat e_tol("10e-8");
 const multiFloat t_min("10e-50");
+const multiFloat t_max("0.1");
 
 //インターバル
 constexpr int INTV = 1;
@@ -109,12 +110,12 @@ int main(){
         }else if(delta > 4){
             dt = 4 * dt;
             if(dt > static_cast<multiFloat>("0.1")){
-                dt = static_cast<multiFloat>("0.1");
+                dt = t_max;
             }
         }else{
             dt = delta * dt;
             if(dt > static_cast<multiFloat>("0.1")){
-                dt = static_cast<multiFloat>("0.1");
+                dt = t_max;
             }
             if(dt < t_min){
                 dt = t_min;
