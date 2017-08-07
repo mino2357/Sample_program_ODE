@@ -1,6 +1,6 @@
 /*
  * RKF45法で二階の常微分方程式を解く．
- * テーマ：2重振り子．
+ * テーマ：二体問題．
  * 線形代数ライブラリのEigenを使用．
  * Boostも使用．
  *
@@ -13,14 +13,9 @@
 #include <iomanip>
 #include <string>
 
-#include <cstring>
-#include <memory>
-
 #include <Eigen/Core>
 #include <Eigen/Sparse>
 #include <Eigen/Dense>
-
-#include <stdlib.h>
 
 #include <boost/multiprecision/cpp_dec_float.hpp>
 
