@@ -24,14 +24,14 @@ namespace mp = boost::multiprecision;
 using multiFloat = mp::cpp_dec_float_100;
 
 // パラメータ
-const multiFloat e("0.9999");
+const multiFloat e("0.99");
 
 //時刻に関するパラメータ
 multiFloat dt("1.0e-4");
 const multiFloat t_limit("10.0");
 
-const multiFloat R_Tol("10e-5");
-const multiFloat A_Tol("10e-5");
+const multiFloat R_Tol("10e-6");
+const multiFloat A_Tol("10e-6");
 const multiFloat t_min("10e-50");
 const multiFloat t_max("0.1");
 
@@ -113,5 +113,4 @@ int main(){
         }
     }
     
-    //pclose(gp);
 }
