@@ -24,16 +24,18 @@ namespace mp = boost::multiprecision;
 using multiFloat = mp::cpp_dec_float_100;
 
 // パラメータ
-const multiFloat e("0.0");
+const multiFloat e("0.9");
 
 //時刻に関するパラメータ
-multiFloat dt("1.0e-3");
-const multiFloat t_limit("10.0");
+multiFloat dt("1.0e-5");
+const multiFloat t_limit("20.0");
 
 const multiFloat RTol("10e-6");
 const multiFloat ATol("10e-6");
 const multiFloat t_min("10e-50");
 const multiFloat t_max("0.1");
+
+const multiFloat alpha("0.8");
 
 //インターバル
 constexpr int INTV = 1;
@@ -52,18 +54,46 @@ namespace mino2357{
     class ButcherRKF45{
     public:
         T table[6][6];
+        T order5[6];
+        T order6[6];
+        T minus[6];
 
         constexpr ButcherRKF45();
+
+        constexpr T operator()(int i, int j){
+            return table[i][j];
+        };
+
+        constexpr T o5(int i){
+            return order5[i];
+        };
+        
+        constexpr T o6(int i){
+            return order6[i];
+        };
+
+        constexpr T R(int i){
+            return minus[i];
+        }
     };
 
     template <typename T>
     constexpr ButcherRKF45<T>::ButcherRKF45(){
         table[0][0] =   ratio<T>(0, 1);
         table[1][0] =   ratio<T>(1, 4);
-        table[2][0] =   ratio<T>(3, 32);        table[2][1] =   ratio<T>(9, 32);
-        table[3][0] =   ratio<T>(1932, 2197);   table[3][1] =   ratio<T>(7200, 2197);    table[3][2] =   ratio<T>(7296, 2197);
-        table[4][0] =   ratio<T>(439, 216);     table[4][1] = - ratio<T>(8, 1);          table[4][2] =   ratio<T>(3680, 513);   table[4][3] = - ratio<T>(845, 4104);
-        table[5][0] = - ratio<T>(8, 27);        table[5][1] =   ratio<T>(2, 1);          table[5][2] = - ratio<T>(3544, 2565);   table[5][3] =   ratio<T>(1859, 4104);    table[5][4] = - ratio<T>(11, 40);
+        table[2][0] =   ratio<T>(3, 32);      table[2][1] =   ratio<T>(9, 32);
+        table[3][0] =   ratio<T>(1932, 2197); table[3][1] = - ratio<T>(7200, 2197);  table[3][2] =   ratio<T>(7296, 2197);
+        table[4][0] =   ratio<T>(439, 216);   table[4][1] = - ratio<T>(8, 1);        table[4][2] =   ratio<T>(3680, 513);   table[4][3] = - ratio<T>(845, 4104);
+        table[5][0] = - ratio<T>(8, 27);      table[5][1] =   ratio<T>(2, 1);        table[5][2] = - ratio<T>(3544, 2565);  table[5][3] =   ratio<T>(1859, 4104);  table[5][4] = - ratio<T>(11, 40);
+        
+        order6[0] = ratio<T>(16, 135);      order6[1] =   ratio<T>(0, 1);   order6[2] = ratio<T>(6656, 12825);
+        order6[3] = ratio<T>(28561, 56430); order6[4] = - ratio<T>(9, 50);  order6[5] = ratio<T>(2, 55);
+    
+        order5[0] = ratio<T>(25, 216);      order5[1] =   ratio<T>(0, 1);   order5[2] = ratio<T>(1408, 2565);
+        order5[3] = ratio<T>(2197, 4104);   order5[4] = - ratio<T>(1, 5);   order5[5] = ratio<T>(0, 1);
+
+        minus[0] =   ratio<T>(1, 360);         minus[1] = ratio<T>(0, 1);      minus[2] = - ratio<T>(128, 4275);
+        minus[3] = - ratio<T>(2197, 75240);    minus[4] = ratio<T>(1, 50);     minus[5] =   ratio<T>(2, 55);
     }
 
     //R^4からR^4への関数．
@@ -100,10 +130,49 @@ namespace mino2357{
     template <typename T>
     inline constexpr void RKF45<T>::Integrate(T& t, T& dt, Eigen::Matrix<T, 4, 1>& x) noexcept{
         current_h = dt;
-        x = x + current_h * func<T>(x);
 
-        next_h = dt;
-        t += next_h;
+        Eigen::Matrix<T, 4, 1> x5, x6, temp; //Eigen::Matrix<T, 4, 1> t;
+        T delta; //T tDelta;
+
+        Eigen::Matrix<T ,4, 1> k0, k1, k2, k3, k4, k5;
+
+        ButcherRKF45<T> bf45;
+
+        k0 = func<T>(x);
+        k1 = func<T>(x + current_h * bf45(1, 0) * k0);
+        k2 = func<T>(x + current_h * bf45(2, 0) * k0 + current_h * bf45(2, 1) * k1);
+        k3 = func<T>(x + current_h * bf45(3, 0) * k0 + current_h * bf45(3, 1) * k1 + current_h * bf45(3, 2) * k2);
+        k4 = func<T>(x + current_h * bf45(4, 0) * k0 + current_h * bf45(4, 1) * k1 + current_h * bf45(4, 2) * k2 + current_h * bf45(4, 3) * k3);
+        k5 = func<T>(x + current_h * bf45(5, 0) * k0 + current_h * bf45(5, 1) * k1 + current_h * bf45(5, 2) * k2 + current_h * bf45(5, 3) * k3 + current_h * bf45(5, 4) * k4);
+
+        x5 = x + current_h * (bf45.o5(0) * k0 + bf45.o5(1) * k1 + bf45.o5(2) * k2 + bf45.o5(3) * k3 + bf45.o5(4) * k4 + bf45.o5(5) * k5);
+        //x6 = x + current_h * (bf45.o6(0) * k0 + bf45.o6(1) * k1 + bf45.o6(2) * k2 + bf45.o6(3) * k3 + bf45.o6(4) * k4 + bf45.o6(5) * k5);
+
+        temp  = (bf45.R(0) * k0 + bf45.R(2) * k2 + bf45.R(3) * k3 + bf45.R(4) * k4 + bf45.R(5) * k5);
+        delta = sqrt(temp(0, 0) * temp(0, 0) + temp(1, 0) * temp(1, 0) + temp(2, 0) * temp(2, 0) + temp(3, 0) * temp(3, 0));
+
+        //tt = x5 - x6;
+
+        //tDelta = sqrt(tt(0, 0) * tt(0, 0) + tt(1, 0) * tt(1, 0) + tt(2, 0) * tt(2, 0) + tt(3, 0) * tt(3, 0));
+
+/*
+        //RK4
+        k1 = func<T>(x);
+        k2 = func<T>(x + current_h * ratio<T>(1, 2) * k1);
+        k3 = func<T>(x + current_h * ratio<T>(1, 2) * k2);
+        k4 = func<T>(x + current_h * ratio<T>(1, 1) * k3);
+
+        x = x + ratio<T>(1, 6) * current_h * (k1 + 2 * k2 + 2 * k3 + k4);
+*/
+
+        //std::cout << delta << std::endl;
+
+        x = x5;
+        t += current_h;
+
+        next_h = current_h * mp::pow(alpha * A_Tol / delta, ratio<T>(1, 5));
+
+        dt = next_h;
     }
 
     template <typename T>
@@ -117,18 +186,15 @@ namespace mino2357{
 int main(){
     Eigen::Matrix<multiFloat, 4, 1> x(1 - e, 0, 0, mp::sqrt((1 + e) / (1 - e)));
     Eigen::Matrix<multiFloat, 4, 1> x4, x5;
-    std::cout << std::fixed << std::setprecision(std::numeric_limits<multiFloat>::digits10 + 1);
-
-    Eigen::Matrix<multiFloat ,4, 1> k1, k2, k3, k4, k5, k6;
+    //std::cout << std::fixed << std::setprecision(std::numeric_limits<multiFloat>::digits10 + 1);
+    std::cout << std::fixed << std::setprecision(35);
 
     multiFloat t{};
 
-    mino2357::ButcherRKF45<multiFloat> BF;
-
     mino2357::RKF45<multiFloat> rkf45(ATol, RTol);
 
-    for(int i=0; i<10000; i++){
-        std::cout << x(0,0) << " " << x(1,0) << " " << x(2,0) << " " << x(3,0) << std::endl;
+    for(int i=0; t<t_limit; i++){
+        std::cout << t << " " << dt << " " << x(0,0) << " " << x(1,0) << " " << x(2,0) << " " << x(3,0) << std::endl;
         rkf45.Integrate(t, dt, x);
     }
     
