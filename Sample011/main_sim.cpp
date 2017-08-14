@@ -28,10 +28,10 @@ const multiFloat e("0.9");
 
 //時刻に関するパラメータ
 multiFloat dt("1.0e-5");
-const multiFloat t_limit("20.0");
+const multiFloat t_limit("100.0");
 
-const multiFloat RTol("10e-6");
-const multiFloat ATol("10e-6");
+const multiFloat RTol("10e-10");
+const multiFloat ATol("10e-10");
 const multiFloat t_min("10e-50");
 const multiFloat t_max("0.1");
 
@@ -117,7 +117,7 @@ namespace mino2357{
     template <typename T>
     class RKF45{
     public:
-        T current_h;
+        T crt_h;
         T next_h;
         T A_Tol;
         T R_Tol;
@@ -129,7 +129,7 @@ namespace mino2357{
 
     template <typename T>
     inline constexpr void RKF45<T>::Integrate(T& t, T& dt, Eigen::Matrix<T, 4, 1>& x) noexcept{
-        current_h = dt;
+        crt_h = dt;
 
         Eigen::Matrix<T, 4, 1> x5, x6, temp; //Eigen::Matrix<T, 4, 1> t;
         T delta; //T tDelta;
@@ -139,14 +139,14 @@ namespace mino2357{
         ButcherRKF45<T> bf45;
 
         k0 = func<T>(x);
-        k1 = func<T>(x + current_h * bf45(1, 0) * k0);
-        k2 = func<T>(x + current_h * bf45(2, 0) * k0 + current_h * bf45(2, 1) * k1);
-        k3 = func<T>(x + current_h * bf45(3, 0) * k0 + current_h * bf45(3, 1) * k1 + current_h * bf45(3, 2) * k2);
-        k4 = func<T>(x + current_h * bf45(4, 0) * k0 + current_h * bf45(4, 1) * k1 + current_h * bf45(4, 2) * k2 + current_h * bf45(4, 3) * k3);
-        k5 = func<T>(x + current_h * bf45(5, 0) * k0 + current_h * bf45(5, 1) * k1 + current_h * bf45(5, 2) * k2 + current_h * bf45(5, 3) * k3 + current_h * bf45(5, 4) * k4);
+        k1 = func<T>(x + crt_h * bf45(1, 0) * k0);
+        k2 = func<T>(x + crt_h * bf45(2, 0) * k0 + crt_h * bf45(2, 1) * k1);
+        k3 = func<T>(x + crt_h * bf45(3, 0) * k0 + crt_h * bf45(3, 1) * k1 + crt_h * bf45(3, 2) * k2);
+        k4 = func<T>(x + crt_h * bf45(4, 0) * k0 + crt_h * bf45(4, 1) * k1 + crt_h * bf45(4, 2) * k2 + crt_h * bf45(4, 3) * k3);
+        k5 = func<T>(x + crt_h * bf45(5, 0) * k0 + crt_h * bf45(5, 1) * k1 + crt_h * bf45(5, 2) * k2 + crt_h * bf45(5, 3) * k3 + crt_h * bf45(5, 4) * k4);
 
-        x5 = x + current_h * (bf45.o5(0) * k0 + bf45.o5(1) * k1 + bf45.o5(2) * k2 + bf45.o5(3) * k3 + bf45.o5(4) * k4 + bf45.o5(5) * k5);
-        //x6 = x + current_h * (bf45.o6(0) * k0 + bf45.o6(1) * k1 + bf45.o6(2) * k2 + bf45.o6(3) * k3 + bf45.o6(4) * k4 + bf45.o6(5) * k5);
+        x5 = x + crt_h * (bf45.o5(0) * k0 + bf45.o5(1) * k1 + bf45.o5(2) * k2 + bf45.o5(3) * k3 + bf45.o5(4) * k4 + bf45.o5(5) * k5);
+        //x6 = x + crt_h * (bf45.o6(0) * k0 + bf45.o6(1) * k1 + bf45.o6(2) * k2 + bf45.o6(3) * k3 + bf45.o6(4) * k4 + bf45.o6(5) * k5);
 
         temp  = (bf45.R(0) * k0 + bf45.R(2) * k2 + bf45.R(3) * k3 + bf45.R(4) * k4 + bf45.R(5) * k5);
         delta = sqrt(temp(0, 0) * temp(0, 0) + temp(1, 0) * temp(1, 0) + temp(2, 0) * temp(2, 0) + temp(3, 0) * temp(3, 0));
@@ -158,19 +158,25 @@ namespace mino2357{
 /*
         //RK4
         k1 = func<T>(x);
-        k2 = func<T>(x + current_h * ratio<T>(1, 2) * k1);
-        k3 = func<T>(x + current_h * ratio<T>(1, 2) * k2);
-        k4 = func<T>(x + current_h * ratio<T>(1, 1) * k3);
+        k2 = func<T>(x + crt_h * ratio<T>(1, 2) * k1);
+        k3 = func<T>(x + crt_h * ratio<T>(1, 2) * k2);
+        k4 = func<T>(x + crt_h * ratio<T>(1, 1) * k3);
 
-        x = x + ratio<T>(1, 6) * current_h * (k1 + 2 * k2 + 2 * k3 + k4);
+        x = x + ratio<T>(1, 6) * crt_h * (k1 + 2 * k2 + 2 * k3 + k4);
 */
 
-        //std::cout << delta << std::endl;
+        
+        if(delta > A_Tol){
+            dt = crt_h * mp::pow(alpha * A_Tol / delta, ratio<T>(1, 5));
+            return;
+        }
 
         x = x5;
-        t += current_h;
+        t += crt_h;
+        
+        std::cout << t << " " << dt << " " << delta << " " << mp::pow(alpha * A_Tol / delta, ratio<T>(1, 5)) << std::endl;
 
-        next_h = current_h * mp::pow(alpha * A_Tol / delta, ratio<T>(1, 5));
+        next_h = crt_h * mp::pow(alpha * A_Tol / delta, ratio<T>(1, 5));
 
         dt = next_h;
     }
@@ -194,7 +200,7 @@ int main(){
     mino2357::RKF45<multiFloat> rkf45(ATol, RTol);
 
     for(int i=0; t<t_limit; i++){
-        std::cout << t << " " << dt << " " << x(0,0) << " " << x(1,0) << " " << x(2,0) << " " << x(3,0) << std::endl;
+        //std::cout << t << " " << dt << " " << x(0,0) << " " << x(1,0) << " " << x(2,0) << " " << x(3,0) << std::endl;
         rkf45.Integrate(t, dt, x);
     }
     
