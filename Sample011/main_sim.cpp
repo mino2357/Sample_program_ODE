@@ -24,21 +24,21 @@ namespace mp = boost::multiprecision;
 using multiFloat = mp::cpp_dec_float_100;
 
 // パラメータ
-const multiFloat e("0.9");
+const multiFloat e("0.999999999999");
 
 //時刻に関するパラメータ
-multiFloat dt("1.0e-5");
+multiFloat dt("1.0e-3");
 const multiFloat t_limit("100.0");
 
-const multiFloat RTol("10e-10");
-const multiFloat ATol("10e-10");
+const multiFloat RTol("10e-8");
+const multiFloat ATol("10e-8");
 const multiFloat t_min("10e-50");
 const multiFloat t_max("0.1");
 
 const multiFloat alpha("0.8");
 
 //インターバル
-constexpr int INTV = 1;
+constexpr int INTV = 10000;
 
 //movie
 constexpr int sim = 0;
@@ -145,8 +145,8 @@ namespace mino2357{
         k4 = func<T>(x + crt_h * bf45(4, 0) * k0 + crt_h * bf45(4, 1) * k1 + crt_h * bf45(4, 2) * k2 + crt_h * bf45(4, 3) * k3);
         k5 = func<T>(x + crt_h * bf45(5, 0) * k0 + crt_h * bf45(5, 1) * k1 + crt_h * bf45(5, 2) * k2 + crt_h * bf45(5, 3) * k3 + crt_h * bf45(5, 4) * k4);
 
-        x5 = x + crt_h * (bf45.o5(0) * k0 + bf45.o5(1) * k1 + bf45.o5(2) * k2 + bf45.o5(3) * k3 + bf45.o5(4) * k4 + bf45.o5(5) * k5);
-        //x6 = x + crt_h * (bf45.o6(0) * k0 + bf45.o6(1) * k1 + bf45.o6(2) * k2 + bf45.o6(3) * k3 + bf45.o6(4) * k4 + bf45.o6(5) * k5);
+        //x5 = x + crt_h * (bf45.o5(0) * k0 + bf45.o5(1) * k1 + bf45.o5(2) * k2 + bf45.o5(3) * k3 + bf45.o5(4) * k4 + bf45.o5(5) * k5);
+        x6 = x + crt_h * (bf45.o6(0) * k0 + bf45.o6(1) * k1 + bf45.o6(2) * k2 + bf45.o6(3) * k3 + bf45.o6(4) * k4 + bf45.o6(5) * k5);
 
         temp  = (bf45.R(0) * k0 + bf45.R(2) * k2 + bf45.R(3) * k3 + bf45.R(4) * k4 + bf45.R(5) * k5);
         delta = sqrt(temp(0, 0) * temp(0, 0) + temp(1, 0) * temp(1, 0) + temp(2, 0) * temp(2, 0) + temp(3, 0) * temp(3, 0));
@@ -167,14 +167,16 @@ namespace mino2357{
 
         
         if(delta > A_Tol){
+            std::cerr << "Retry" << " " << t << " " << dt << std::endl;
             dt = crt_h * mp::pow(alpha * A_Tol / delta, ratio<T>(1, 5));
             return;
         }
 
-        x = x5;
+        //x = x5;
+        x = x6;
         t += crt_h;
         
-        std::cout << t << " " << dt << " " << delta << " " << mp::pow(alpha * A_Tol / delta, ratio<T>(1, 5)) << std::endl;
+        //std::cout << t << " " << dt << " " << delta << " " << A_Tol << " " << mp::pow(alpha * A_Tol / delta, ratio<T>(1, 5)) << std::endl;
 
         next_h = crt_h * mp::pow(alpha * A_Tol / delta, ratio<T>(1, 5));
 
@@ -194,61 +196,18 @@ int main(){
     Eigen::Matrix<multiFloat, 4, 1> x4, x5;
     //std::cout << std::fixed << std::setprecision(std::numeric_limits<multiFloat>::digits10 + 1);
     std::cout << std::fixed << std::setprecision(35);
+    std::cerr << std::fixed << std::setprecision(35);
 
     multiFloat t{};
 
     mino2357::RKF45<multiFloat> rkf45(ATol, RTol);
 
     for(int i=0; t<t_limit; i++){
-        //std::cout << t << " " << dt << " " << x(0,0) << " " << x(1,0) << " " << x(2,0) << " " << x(3,0) << std::endl;
+        if(i%INTV == 0){
+            std::cerr << t << " " << mp::log10(dt) << std::endl;
+            std::cout << t << " " << mp::log10(dt) << " " << x(0,0) << " " << x(1,0) << " " << x(2,0) << " " << x(3,0) << std::endl;
+        }
         rkf45.Integrate(t, dt, x);
     }
     
-    return 0;
-/*
-    for(std::size_t i{}; t<t_limit; ++i){
-        
-        if(i%INTV == 0){
-        }
-        
-
-        //RK4法で常微分方程式を解く．
-        k1 = func<>(x);
-        k2 = func<>(x + dt / 4 * k1);
-        k3 = func<>(x + dt / 32 * (3 * k1 + 9 * k2));
-        k4 = func<>(x + dt / 2197 * (1932 * k1 - 7200 * k2 + 7296 * k3));
-        k5 = func<>(x + dt * (static_cast<multiFloat>(439)/216 * k1 - 8 * k2 + static_cast<multiFloat>(3680)/513 * k3 - static_cast<multiFloat>(845)/4104 * k4));
-        k6 = func<>(x + dt * (- static_cast<multiFloat>(8)/27 * k1 + 2 * k2 - static_cast<multiFloat>(3544)/2565 * k3 + static_cast<multiFloat>(1859)/4104 * k4 - static_cast<multiFloat>(11)/40 * k5));
-        
-        x4 = x + dt * (static_cast<multiFloat>(25)/216 * k1 + static_cast<multiFloat>(1408)/2565 * k3 + static_cast<multiFloat>(2197)/4104 * k4 - static_cast<multiFloat>(1)/5 * k5);
-        x5 = x + dt * (static_cast<multiFloat>(16)/135 * k1 + static_cast<multiFloat>(6656)/12825 * k3 + static_cast<multiFloat>(28561)/56430 * k4 - static_cast<multiFloat>(9)/50 * k5 + static_cast<multiFloat>(2)/55 * k6);
-       
-        auto temp  = (static_cast<multiFloat>(25)/216 * k1 + static_cast<multiFloat>(1408)/2565 * k3 + static_cast<multiFloat>(2197)/4104 * k4 - static_cast<multiFloat>(1)/5 * k5) - (static_cast<multiFloat>(16)/135 * k1 + static_cast<multiFloat>(6656)/12825 * k3 + static_cast<multiFloat>(28561)/56430 * k4 - static_cast<multiFloat>(9)/50 * k5 + static_cast<multiFloat>(2)/55 * k6);
-        multiFloat R = mp::sqrt((temp(0, 0) * temp(0, 0) + temp(1, 0) * temp(1, 0) + temp(2, 0) * temp(2, 0) + temp(3, 0) * temp(3, 0)));
-
-        multiFloat x4_abs = mp::sqrt(static_cast<multiFloat>(x4(0, 0) * x4(0,0) + x4(1, 0) * x4(1,0) + x4(2, 0) * x4(2,0) + x4(3, 0) * x4(3,0)));
-
-        multiFloat E = static_cast<multiFloat>(1)/static_cast<multiFloat>(2) * (ATol + x4_abs * RTol);
-
-
-
-        if(mp::pow(E/R, static_cast<multiFloat>(1)/5) < 1){
-            dt = dt * 0.6 * mp::pow(E/R, static_cast<multiFloat>(1)/5);
-            continue;
-        }
-
-        x  = x4;
-        //std::cout << t << " " << mp::log10(dt) << " " << x(0, 0) << " " << x(1, 0) << " " << x(2, 0) << " " << x(3, 0) << std::endl;
-        std::cout << t << " " << mp::log10(dt) << " " << R << " " << mp::pow(E/R, static_cast<multiFloat>(1)/5) << " " << x(0, 0) << " " << x(2, 0) << " " <<mp::sqrt(static_cast<multiFloat>(x4(1, 0) * x4(1,0) + x4(3, 0) * x4(3,0))) << std::endl;
-
-        t += dt;
-
-        //std::cout << x4 << std::endl;
-        
-        dt = 10.0 * dt;
-        if(dt > t_max){
-            dt = t_max;
-        }
-    }
-    */  
 }
