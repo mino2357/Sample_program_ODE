@@ -24,7 +24,7 @@ namespace mp = boost::multiprecision;
 using multiFloat = mp::cpp_dec_float_100;
 
 // パラメータ
-const multiFloat e("0.999999999999");
+const multiFloat e("0.9999");
 
 //時刻に関するパラメータ
 multiFloat dt("1.0e-3");
@@ -38,7 +38,7 @@ const multiFloat t_max("0.1");
 const multiFloat alpha("0.8");
 
 //インターバル
-constexpr int INTV = 10000;
+constexpr int INTV = 1;
 
 //movie
 constexpr int sim = 0;
@@ -167,7 +167,7 @@ namespace mino2357{
 
         
         if(delta > A_Tol){
-            std::cerr << "Retry" << " " << t << " " << dt << std::endl;
+            std::cerr << "Retry " << t << " " << dt << std::endl;
             dt = crt_h * mp::pow(alpha * A_Tol / delta, ratio<T>(1, 5));
             return;
         }
