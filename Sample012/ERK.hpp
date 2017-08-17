@@ -157,17 +157,262 @@ namespace mino2357{
     class ButcherRKF78{
     public:
         T table[13][13];
+        T order8[13];
+        T order9[13];
+
         constexpr ButcherRKF78();
+        
+        constexpr T operator()(int i, int j){
+            return table[i][j];
+        };
+
+        constexpr T o8(int i){
+            return order8[i];
+        };
+        
+        constexpr T o9(int i){
+            return order9[i];
+        };
     };
 
     template <typename T>
     constexpr ButcherRKF78<T>::ButcherRKF78(){
-        table[0][0] = 0;
+        T zero = 0;
+        
+        table[0][0] = zero;
+
+        table[1][0] = ratio<T>(2, 27);
+        table[0][1] = zero;
+        
+        table[2][0] = ratio<T>(1, 36);
+        table[2][1] = ratio<T>(1, 12);
+        table[2][2] = zero;
+        
+        table[3][0] = ratio<T>(1, 24);
+        table[3][1] = zero;
+        table[3][2] = ratio<T>(1, 8);
+        table[3][3] = zero;
+        
+        table[4][0] = ratio<T>(5, 12);
+        table[4][1] = zero;
+        table[4][2] = ratio<T>(-25, 16);
+        table[4][3] = ratio<T>(25, 16);
+        table[4][4] = zero;
+        
+        table[5][0] = ratio<T>(1, 20);
+        table[5][1] = zero;
+        table[5][2] = zero;
+        table[5][3] = ratio<T>(1, 4);
+        table[5][4] = ratio<T>(1, 5);
+        table[5][5] = zero;
+        
+        table[6][0] = ratio<T>(-25, 108);
+        table[6][1] = zero;
+        table[6][2] = zero;
+        table[6][3] = ratio<T>(125, 108);
+        table[6][4] = ratio<T>(-65, 27);
+        table[6][5] = ratio<T>(125, 54);
+        table[6][6] = zero;
+        
+        table[7][0] = ratio<T>(31, 300);
+        table[7][1] = zero;
+        table[7][2] = zero;
+        table[7][3] = zero;
+        table[7][4] = ratio<T>(61, 225);
+        table[7][5] = ratio<T>(-2, 9);
+        table[7][6] = ratio<T>(13, 900);
+        table[7][7] = zero;
+        
+        table[8][0] = ratio<T>(2, 1);
+        table[8][1] = zero;
+        table[8][2] = zero;
+        table[8][3] = ratio<T>(-53, 6);
+        table[8][4] = ratio<T>(704, 45);
+        table[8][5] = ratio<T>(-107, 9);
+        table[8][6] = ratio<T>(67, 90);
+        table[8][7] = ratio<T>(3, 1);
+        table[8][8] = zero;
+        
+        table[9][0] = ratio<T>(-91, 108);
+        table[9][1] = zero;
+        table[9][2] = zero;
+        table[9][3] = ratio<T>(23, 108);
+        table[9][4] = ratio<T>(-976, 135);
+        table[9][5] = ratio<T>(311, 54);
+        table[9][6] = ratio<T>(-19, 60);
+        table[9][7] = ratio<T>(17, 6);
+        table[9][8] = ratio<T>(-1, 12);
+        table[9][9] = zero;
+        
+        table[10][0]  = ratio<T>(2383, 4100);
+        table[10][1]  = zero;
+        table[10][2]  = zero;
+        table[10][3]  = ratio<T>(-341, 164);
+        table[10][4]  = ratio<T>(4496, 1025);
+        table[10][5]  = ratio<T>(-301, 82);
+        table[10][6]  = ratio<T>(2133, 4100);
+        table[10][7]  = ratio<T>(45, 82);
+        table[10][8]  = ratio<T>(45, 164);
+        table[10][9]  = ratio<T>(18, 41);
+        table[10][10] = zero;
+        
+        table[11][0]  = ratio<T>(3, 205);
+        table[11][1]  = zero;
+        table[11][2]  = zero;
+        table[11][3]  = zero;
+        table[11][4]  = zero;
+        table[11][5]  = ratio<T>(-6, 41);
+        table[11][6]  = ratio<T>(-3, 205);
+        table[11][7]  = ratio<T>(-3, 41);
+        table[11][8]  = ratio<T>(3, 41);
+        table[11][9]  = ratio<T>(6, 41);
+        table[11][10] = zero;
+        table[11][11] = zero;
+        
+        table[12][0]  = ratio<T>(-1777, 4100);
+        table[12][1]  = zero;
+        table[12][2]  = zero;
+        table[12][3]  = ratio<T>(-341, 164);
+        table[12][4]  = ratio<T>(4496, 1025);
+        table[12][5]  = ratio<T>(-289, 82);
+        table[12][6]  = ratio<T>(2193, 4100);
+        table[12][7]  = ratio<T>(51, 82);
+        table[12][8]  = ratio<T>(33, 164);
+        table[12][9]  = ratio<T>(12, 41);
+        table[12][10] = zero;
+        table[12][11] = ratio<T>(1, 1);
+        table[12][12] = zero;
+
+        order8[0]  = ratio<T>(41, 840);
+        order8[1]  = zero;
+        order8[2]  = zero;
+        order8[3]  = zero;
+        order8[4]  = zero;
+        order8[5]  = ratio<T>(34, 105);
+        order8[6]  = ratio<T>(9, 35);
+        order8[7]  = ratio<T>(9, 35);
+        order8[8]  = ratio<T>(9, 280);
+        order8[9]  = ratio<T>(9, 280);
+        order8[10] = ratio<T>(41, 840);
+        order8[11] = zero;
+        order8[12] = zero;
+        
+        order9[0]  = zero;
+        order9[1]  = zero;
+        order9[2]  = zero;
+        order9[3]  = zero;
+        order9[4]  = zero;
+        order9[5]  = ratio<T>(34, 105);
+        order9[6]  = ratio<T>(9, 35);
+        order9[7]  = ratio<T>(9, 35);
+        order9[8]  = ratio<T>(9, 280);
+        order9[9]  = ratio<T>(9, 280);
+        order9[10] = zero;
+        order9[11] = ratio<T>(41, 840);
+        order9[12] = ratio<T>(41, 840);
     }
 
+    template <typename T>
+    class RKF78{
+    public:
+        T crt_h;
+        T next_h;
+        T A_Tol;
+        T R_Tol;//今は使わない
 
+        constexpr RKF78(T, T);
+        
+        inline constexpr void Integrate(T& t, T& dt, Eigen::Matrix<T, 4, 1>& x) noexcept;
+    };
 
+    template <typename T>
+    constexpr RKF78<T>::RKF78(T at,T rt){
+        A_Tol = at;
+        R_Tol = rt;
+    }
 
+    template <typename T>
+    inline constexpr void RKF78<T>::Integrate(T& t, T& dt, Eigen::Matrix<T, 4, 1>& x) noexcept{
+        crt_h = dt;
+
+        Eigen::Matrix<T, 4, 1> x8, x9, temp;
+        T R, delta;
+
+        Eigen::Matrix<T ,4, 1> k0, k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, k12;
+
+        ButcherRKF78<T> f;
+
+        k0 = func<T>(x);
+        k1 = func<T>(x + crt_h * f(1, 0) * k0);
+        k2 = func<T>(x + crt_h * f(2, 0) * k0 + crt_h * f(2, 1) * k1);
+        k3 = func<T>(x + crt_h * f(3, 0) * k0 + crt_h * f(3, 1) * k1 + crt_h * f(3, 2) * k2);
+        k4 = func<T>(x + crt_h * f(4, 0) * k0 + crt_h * f(4, 1) * k1 + crt_h * f(4, 2) * k2 + crt_h * f(4, 3) * k3);
+        k5 = func<T>(x + crt_h * f(5, 0) * k0 + crt_h * f(5, 1) * k1 + crt_h * f(5, 2) * k2 + crt_h * f(5, 3) * k3 + crt_h * f(5, 4) * k4);
+        k6 = func<T>(x + crt_h * f(6, 0) * k0 + crt_h * f(6, 1) * k1 + crt_h * f(6, 2) * k2 + crt_h * f(6, 3) * k3 + crt_h * f(6, 4) * k4
+                       + crt_h * f(6, 5) * k5);
+        k7 = func<T>(x + crt_h * f(7, 0) * k0 + crt_h * f(7, 1) * k1 + crt_h * f(7, 2) * k2 + crt_h * f(7, 3) * k3 + crt_h * f(7, 4) * k4
+                       + crt_h * f(7, 5) * k5 + crt_h * f(7, 6) * k6);
+        k8 = func<T>(x + crt_h * f(8, 0) * k0 + crt_h * f(8, 1) * k1 + crt_h * f(8, 2) * k2 + crt_h * f(8, 3) * k3 + crt_h * f(8, 4) * k4
+                       + crt_h * f(8, 5) * k5 + crt_h * f(8, 6) * k6 + crt_h * f(8, 7) * k7);
+        k9 = func<T>(x + crt_h * f(9, 0) * k0 + crt_h * f(9, 1) * k1 + crt_h * f(9, 2) * k2 + crt_h * f(9, 3) * k3 + crt_h * f(9, 4) * k4
+                       + crt_h * f(9, 5) * k5 + crt_h * f(9, 6) * k6 + crt_h * f(9, 7) * k7 + crt_h * f(9, 8) * k8);
+        k10= func<T>(x + crt_h * f(10, 0) * k0 + crt_h * f(10, 1) * k1 + crt_h * f(10, 2) * k2 + crt_h * f(10, 3) * k3 + crt_h * f(10, 4) * k4
+                       + crt_h * f(10, 5) * k5 + crt_h * f(10, 6) * k6 + crt_h * f(10, 7) * k7 + crt_h * f(10, 8) * k8 + crt_h * f(10, 9) * k9);
+        k11= func<T>(x + crt_h * f(11, 0) * k0 + crt_h * f(11, 1) * k1 + crt_h * f(11, 2) * k2 + crt_h * f(11, 3) * k3 + crt_h * f(11, 4) * k4
+                       + crt_h * f(11, 5) * k5 + crt_h * f(11, 6) * k6 + crt_h * f(11, 7) * k7 + crt_h * f(11, 8) * k8 + crt_h * f(11, 9) * k9
+                       + crt_h * f(11, 10) * k10);
+        k12= func<T>(x + crt_h * f(12, 0) * k0 + crt_h * f(12, 1) * k1 + crt_h * f(12, 2) * k2 + crt_h * f(12, 3) * k3 + crt_h * f(12, 4) * k4
+                       + crt_h * f(12, 5) * k5 + crt_h * f(12, 6) * k6 + crt_h * f(12, 7) * k7 + crt_h * f(12, 8) * k8 + crt_h * f(12, 9) * k9
+                       + crt_h * f(12, 10) * k10 + crt_h * f(12, 11) * k11);
+        
+        x8 = x + crt_h * (f.o8(0) * k0
+                        + f.o8(1) * k1
+                        + f.o8(2) * k2
+                        + f.o8(3) * k3
+                        + f.o8(4) * k4
+                        + f.o8(5) * k5
+                        + f.o8(6) * k6
+                        + f.o8(7) * k7
+                        + f.o8(8) * k8
+                        + f.o8(9) * k9
+                        + f.o8(10) * k10
+                        + f.o8(11) * k11
+                        + f.o8(12) * k12);
+        
+        x9 = x + crt_h * (f.o9(0) * k0
+                        + f.o9(1) * k1
+                        + f.o9(2) * k2
+                        + f.o9(3) * k3
+                        + f.o9(4) * k4
+                        + f.o9(5) * k5
+                        + f.o9(6) * k6
+                        + f.o9(7) * k7
+                        + f.o9(8) * k8
+                        + f.o9(9) * k9
+                        + f.o9(10) * k10
+                        + f.o9(11) * k11
+                        + f.o9(12) * k12);
+
+        temp = x8 - x9;
+
+        R = (temp(0, 0) * temp(0, 0) + temp(1, 0) * temp(1, 0) + temp(2, 0) * temp(2, 0) + temp(3, 0) * temp(3, 0)) / crt_h;
+
+        delta = mp::sqrt(R);
+        
+        if(delta > A_Tol){
+            std::cerr << "Retry " << t << " " << dt << std::endl;
+            dt = crt_h * mp::pow(alpha * A_Tol / delta, ratio<T>(1, 5));
+            return;
+        }
+
+        x = x8;
+
+        t += crt_h;
+        
+        next_h = crt_h * mp::pow(alpha * A_Tol / delta, ratio<T>(1, 8));
+
+        dt = next_h;
+    }
 
 
 

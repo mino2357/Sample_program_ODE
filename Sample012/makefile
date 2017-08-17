@@ -1,15 +1,11 @@
-CXX = g++ #/usr/local/bin/clang++ 
+CXX = g++
 TARGET = main_sim
-CXXFLAGS = -std=c++1z -Wall -Wextra -O2 #-I/usr/local/include
-LDFLAGS = #-L/usr/local/lib
-LDLIBS = #-lm -lpng -lSiv3D -lboost_filesystem -lboost_system -lfreetype -lturbojpeg -lz -lGLEW -lharfbuzz -lc++
-SRCS = main_sim.cpp 
-OBJS := $(SRCS:.cpp=.o)
+CXXFLAGS = -std=c++1z -Wall -Wextra -O2
+LDLFLAGS = -lstdc++
+SRCS = main_sim.cpp
+OBJS = $(SRCS:.cpp=.o)
 
-all:$(TARGET)
-
-# $(TARGET): $(OBJS)
-#		$(CXX) $(LDLIBS) -o $@ $(OBJS)
+all: $(TARGET)
 
 run: all
 	./$(TARGET)
