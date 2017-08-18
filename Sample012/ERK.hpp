@@ -19,10 +19,32 @@ using multiFloat = mp::cpp_dec_float_100;
 const multiFloat alpha("0.8");
 
 namespace mino2357{
+
+    template <typename T>
+    constexpr T ratio(int a, int b){
+        return static_cast<T>(a) / static_cast<T>(b);
+    }
    
     //R^4からR^4への関数．
     template <typename T = multiFloat>
     Eigen::Matrix<T, 4, 1> func(const Eigen::Matrix<multiFloat, 4, 1>& u){
+        T mu1      = 0.012277471;
+        T mu2      = 1 - mu1;
+        T y1       = u(0, 0);
+        T y1_dot   = u(1, 0);
+        T y2       = u(2, 0);
+        T y2_dot   = u(3, 0);
+
+        T D1 = mp::pow((y1 + mu1) * (y1 + mu1) + y2 * y2, ratio<T>(3, 2));
+        T D2 = mp::pow((y1 - mu2) * (y1 - mu2) + y2 * y2, ratio<T>(3, 2));
+
+        return Eigen::Matrix<T, 4, 1> {
+            y1_dot,
+            y1 + 2 * y2_dot - mu2 * (y1 + mu1) / D1 - mu1 * (y1 - mu2) / D2,
+            y2_dot,
+            y2 - 2 * y1_dot - mu2 * (y2      ) / D1 - mu1 * (y2      ) / D2
+        };
+        /*
         T x       = u(0, 0);
         T x_dot   = u(1, 0);
         T y       = u(2, 0);
@@ -36,16 +58,12 @@ namespace mino2357{
             y_dot,
             - y / mp::sqrt(R * R * R)
         };
+        */
     }
     
     /*************************************************************************/    
     /*************************************************************************/    
     /*************************************************************************/    
-
-    template <typename T>
-    constexpr T ratio(int a, int b){
-        return static_cast<T>(a) / static_cast<T>(b);
-    }
 
     template <typename T>
     class ButcherRKF45{

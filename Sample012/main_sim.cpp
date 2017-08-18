@@ -30,21 +30,22 @@ const multiFloat e("0.9999999999999999");
 
 //時刻に関するパラメータ
 multiFloat dt("1.0e-1");
-const multiFloat t_limit("100.0");
+const multiFloat t_limit("1000.0");
 
-const multiFloat RTol("10e-10");
-const multiFloat ATol("10e-10");
+const multiFloat RTol("10e-40");
+const multiFloat ATol("10e-40");
 const multiFloat t_min("10e-50");
 const multiFloat t_max("0.1");
 
 //インターバル
-constexpr int INTV = 1;
+constexpr int INTV = 1000;
 
 //movie
 constexpr int sim = 0;
 
 int main(){
-    Eigen::Matrix<multiFloat, 4, 1> x(1 - e, 0, 0, mp::sqrt((1 + e) / (1 - e)));
+    //Eigen::Matrix<multiFloat, 4, 1> x(1 - e, 0, 0, mp::sqrt((1 + e) / (1 - e)));
+    Eigen::Matrix<multiFloat, 4, 1> x(0.994, 0, 0, -2.00158510637908252240537862224);
     Eigen::Matrix<multiFloat, 4, 1> x8, x9;
     //std::cout << std::fixed << std::setprecision(std::numeric_limits<multiFloat>::digits10 + 1);
     std::cout << std::fixed << std::setprecision(35);
