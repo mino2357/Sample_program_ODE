@@ -7,6 +7,7 @@
 #include <limits>
 #include <iomanip>
 #include <string>
+#include <random>
 
 #include <Eigen/Core>
 #include <Eigen/Sparse>
@@ -14,11 +15,9 @@
 
 #include <boost/multiprecision/cpp_dec_float.hpp>
 
-namespace mp = boost::multiprecision;
-
-using multiFloat = mp::cpp_dec_float_100;
-
 const multiFloat alpha("0.8");
+
+constexpr int order = 2;
 
 namespace mino2357{
 
@@ -89,16 +88,24 @@ namespace mino2357{
         m[1] = 5;
         m[2] = 3;
 */
-        T m[planets];
+/*
+    	std::mt19937 mt;
+    	std::random_device rnd;
+    	mt.seed(rnd());
+    	std::uniform_real_distribution<> rand10(0, 1);
+       */ 
+		T m[planets];
         for(int i=0; i<planets; ++i){
-            m[i] = ratio<T>(1, 1);
+            m[i] = 1;//rand10(mt);
         }
+	
+		//m[0] = 10;
 
         for(int i=0; i<planets; ++i){
             for(int j=0; j<planets; ++j){
                 if(i != j){
                     for(int k=0; k<dim; ++k){
-                        F[i][j][k] += - m[j] * (x[i][k] - x[j][k])/(R[i][j] * R[i][j]* R[i][j]);
+                        F[i][j][k] += - m[j] * (x[i][k] - x[j][k])/mp::pow(R[i][j], 1 + order);
                         //F[i][j][k] += - (x[i][k] - x[j][k])/(R[i][j] * R[i][j]* R[i][j]);
                     }
                 }
@@ -446,7 +453,7 @@ namespace mino2357{
     inline constexpr void RKF78<T>::Integrate(T& t, T& dt, Eigen::Matrix<T, N, 1>& x) noexcept{
         crt_h = dt;
 
-        Eigen::Matrix<T, N, 1> x8, x9, temp;
+        Eigen::Matrix<T, N, 1> x9, x8, temp;
         T R, delta;
 
         R = 0;
@@ -521,42 +528,19 @@ namespace mino2357{
             dt = crt_h * mp::pow(alpha * A_Tol / delta, ratio<T>(1, 5));
             return;
         }
-        
 
-        x = x8;
+        x = x9;
 
         t += crt_h;
         
         next_h = crt_h * mp::pow(alpha * A_Tol / delta, ratio<T>(1, 8));
 
+		if(next_h > t_max){
+			next_h = t_max;
+		}
+
         dt = next_h;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }
