@@ -7,7 +7,7 @@ GNUPLOT_CMD="
 	plot[-2:2][-2:2] 'data.dat' u 1:2 w l lw 2
 "
 
-for i in `seq 2 10`; do
+for i in `seq 2 20`; do
 	xi=`echo "${i}*2 - 1" | bc`
 	yi=`echo "${i}*2" | bc`
 	GNUPLOT_CMD="

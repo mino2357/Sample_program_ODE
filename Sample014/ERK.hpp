@@ -15,6 +15,8 @@
 
 #include <boost/multiprecision/cpp_dec_float.hpp>
 
+#include <omp.h>
+
 const multiFloat alpha("0.8");
 
 constexpr int order = 2;
@@ -33,7 +35,7 @@ namespace mino2357{
      */
 
 
-    //R^4からR^4への関数．
+    //R^NからR^Nへの関数．
     template <typename T = multiFloat>
     Eigen::Matrix<T, N, 1> func(const Eigen::Matrix<multiFloat, N, 1>& u){
         T x[planets][dim];
@@ -62,21 +64,25 @@ namespace mino2357{
         T F[planets][planets][dim] {};
 
         // distance
+		//#pragma omp parallel for
         for(int i=0; i<planets; ++i){
-            for(int j=0; j<planets; ++j){
+			for(int j=0; j<planets; ++j){
                 for(int k=0; k<dim; ++k){
                     R[i][j] += (x[i][k] - x[j][k]) * (x[i][k] - x[j][k]);
                 }
             }
         }
+
+		//#pragma omp parallel for
         for(int i=0; i<planets; ++i){
-            for(int j=0; j<planets; ++j){
+			for(int j=0; j<planets; ++j){
                 R[i][j] = mp::sqrt(R[i][j]);
             }
         }
 
         Eigen::Matrix<multiFloat, N, 1> ans{};
 
+		//#pragma omp parallel for
         for(int i=0; i<N/2; ++i){
             ans(i, 0) = x_dot[i/dim][i%dim];
             //std::cout << ans(i, 0) << " ";
@@ -96,11 +102,12 @@ namespace mino2357{
        */ 
 		T m[planets];
         for(int i=0; i<planets; ++i){
-            m[i] = 1;//rand10(mt);
+            m[i] = 1./1.;//rand10(mt);
         }
 	
 		//m[0] = 10;
 
+		//#pragma omp parallel for
         for(int i=0; i<planets; ++i){
             for(int j=0; j<planets; ++j){
                 if(i != j){
@@ -111,19 +118,10 @@ namespace mino2357{
                 }
             }
         }
-        /*
-        for(int i=0; i<planets; ++i){
-            for(int j=0; j<planets; ++j){
-                for(int k=0; k<dim; ++k){
-                    std::cout << i << " " << j << " " << F[i][j][k] << std::endl;
-                }
-            }
-        }
-        std::cout << std::endl;
-        */
 
         T F_vector[planets][dim] {};
 
+		//#pragma omp parallel for
         for(int i=0; i<planets; ++i){
             for(int j=0; j<planets; ++j){
                 for(int k=0; k<dim; ++k){
@@ -140,12 +138,6 @@ namespace mino2357{
                 }
             }
         }
-/*
-        for(int i=0; i<N; ++i){
-            std::cout << ans(i, 0) << std::endl;
-        }
-        std::cout << std::endl;
-*/
         return ans;
     }
     
@@ -455,7 +447,6 @@ namespace mino2357{
 
         Eigen::Matrix<T, N, 1> x9, x8, temp;
         T R, delta;
-
         R = 0;
 
         Eigen::Matrix<T, N, 1> k0, k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, k12;
