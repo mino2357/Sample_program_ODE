@@ -11,24 +11,24 @@
 #include <iomanip>
 
 /* parameter */
-template <typename T>
+template <typename T = double>
 constexpr T alpha = static_cast<T>(1.);
 
-template <typename T>
+template <typename T = double>
 constexpr T beta = static_cast<T>(1.);
 
-template <typename T>
+template <typename T = double>
 constexpr T t_limit = static_cast<T>(10.);
 
-template <typename T>
+template <typename T = double>
 constexpr T dt = static_cast<T>(1./1000.);
 
 /* initial value */
-template <typename T>
+template <typename T = double>
 constexpr T x_init = static_cast<T>(1./10.);
 
 /* f(x) */
-template<typename T>
+template<typename T = double>
 constexpr T func(T x){
     return alpha<T> * (1. - x / beta<T>) * x;
 }
