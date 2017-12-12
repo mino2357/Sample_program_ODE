@@ -185,8 +185,6 @@ int main(){
         //auto delta = static_cast<multiFloat>(0.86) * mp::pow(e_tol * dt / (2 * R), static_cast<multiFloat>(1)/4);
         auto delta = static_cast<multiFloat>("0.86") * static_cast<multiFloat>(mp::pow(static_cast<multiFloat>(e_tol/(2 * R)), static_cast<multiFloat>("0.25")));
 
-        //この辺は適当にチューニング．最適な刻み幅制御は自分もよくわかっていない．
-        
         if(delta < static_cast<multiFloat>("0.1")){
             dt = static_cast<multiFloat>("0.1") * dt;
             if(dt < t_min){
