@@ -25,7 +25,7 @@ constexpr double g           = 1.0;//9.8
 constexpr double m1          = 1.0;
 constexpr double m2          = 1.0;
 constexpr double L1          = 1.0;
-constexpr double L2          = 1.0;
+constexpr double L2          = 0.4;
 //初期角
 constexpr double theta1_init = 3.0;
 constexpr double theta2_init = 3.0;
@@ -41,7 +41,7 @@ constexpr double e_tol = 10e-10;
 constexpr double t_min = 10e-6;
 
 //インターバル
-constexpr int INTV = 100;
+constexpr int INTV = 40;
 
 //movie
 constexpr int sim = 0;
