@@ -66,9 +66,14 @@ namespace mino2357{
         }
 
 		T m[planets];
+        /*
         for(int i=0; i<planets; ++i){
             m[i] = 1./1.;//rand10(mt);
         }
+        */
+        m[0] = 4.0;
+        m[1] = 5.0;
+        m[2] = 3.0;
 	
         for(int i=0; i<planets; ++i){
             for(int j=0; j<planets; ++j){
