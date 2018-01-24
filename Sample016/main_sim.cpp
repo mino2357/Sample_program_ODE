@@ -58,7 +58,7 @@ int main(){
 	//std::cout << std::fixed << std::setprecision(std::numeric_limits<multiFloat>::digits10 + 1);
 	//std::cout << std::fixed << std::setprecision(std::numeric_limits<multiFloat>::digits10 + 1);
     std::cout << std::fixed << std::setprecision(20);
-    std::cerr << std::fixed << std::setprecision(20);
+    std::cerr << std::fixed << std::setprecision(100);
 
     multiFloat t{};
 
@@ -79,7 +79,8 @@ int main(){
 	int time{};
 
     for(int i=0; t<t_limit; i++){
-		if(i%10 == 0){	
+		if(i%10 == 0){
+            std::cerr << dt << std::endl;
             std::cout << x(0,0) << " " << x(1,0) << " " << x(2,0) << " " << x(3,0) << " "<< x(4,0) << " " << x(5,0) << std::endl;
 	    }
         if(t * 100 > time){
