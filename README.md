@@ -1,6 +1,6 @@
-# 常微分方程式の数値解法の基礎 by 簑毛崇章（Takaaki MINOMO）
+# 常微分方程式の数値解法の基礎 by Takaaki MINOMO
 
-（APS学習コミュニティの教材用に作成．http://www.aps153.org）
+（塾の教材用に作成．）
 
 ## 動作環境等
 
@@ -9,7 +9,7 @@ Ubuntu16.04.
 プログラムはC++で作成．
 
 Boost, Eigenを適宜使用した．
- 
+
 Boost C++ライブラリ : http://www.boost.org
 
 Eigen 線形代数ライブラリ : http://eigen.tuxfamily.org

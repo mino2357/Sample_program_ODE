@@ -1,4 +1,5 @@
 CXX = g++ #/usr/local/bin/clang++ 
+#TARGET = main
 TARGET = main
 CXXFLAGS = -std=c++1z -Wall -Wextra -O2 #-I/usr/local/include
 LDFLAGS = #-L/usr/local/lib
