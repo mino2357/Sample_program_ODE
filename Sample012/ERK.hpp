@@ -6,7 +6,7 @@
 #include <iomanip>
 #include <string>
 
-#include <Eigen/Core>
+//#include <Eigen/Core>
 #include <Eigen/Sparse>
 #include <Eigen/Dense>
 

@@ -1,4 +1,4 @@
-CXX = g++
+CXX = /usr/local/bin/g++-7 
 TARGET = main_sim
 CXXFLAGS = -std=c++1z -Wall -Wextra -O2
 LDLFLAGS = -lstdc++
