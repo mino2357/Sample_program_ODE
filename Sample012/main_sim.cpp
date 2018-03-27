@@ -1,6 +1,6 @@
 /*
- * RKF45法で二階の常微分方程式を解く．
- * テーマ：二体問題．
+ * RKF78法で二階の常微分方程式を解く．
+ * テーマ：アレンストーフ軌道．
  * 線形代数ライブラリのEigenを使用．
  * Boostも使用．
  *
@@ -25,9 +25,6 @@ namespace mp = boost::multiprecision;
 
 using multiFloat = mp::cpp_dec_float_100;
 
-// パラメータ
-//const multiFloat e("0.9999999999999999");
-
 //時刻に関するパラメータ
 multiFloat dt("1.0e-8");
 const multiFloat t_limit("100.0");
@@ -44,10 +41,7 @@ constexpr int INTV = 1;
 constexpr int sim = 0;
 
 int main(){
-    //Eigen::Matrix<multiFloat, 4, 1> x(1 - e, 0, 0, mp::sqrt((1 + e) / (1 - e)));
     Eigen::Matrix<multiFloat, 4, 1> x(0.994, 0, 0, -2.00158510637908252240537862224);
-    //Eigen::Matrix<multiFloat, 4, 1> x8, x9;
-    //std::cout << std::fixed << std::setprecision(std::numeric_limits<multiFloat>::digits10 + 1);
     std::cout << std::fixed << std::setprecision(35);
     std::cerr << std::fixed << std::setprecision(35);
 
